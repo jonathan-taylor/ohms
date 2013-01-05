@@ -1,0 +1,33 @@
+table.frame {
+    border:0px;
+}
+
+table.frame td {
+    vertical-align: top;
+    padding: 10px;
+}
+
+ol.ohms-ol {
+    list-style-type: lower-alpha;
+}
+
+ol.ohms-ol ol.ohms-ol {
+    list-style-type: lower-roman;
+}
+
+.score {
+    font-weight : bold;
+}
+
+.comments {
+    color : blue;
+    font-size : small;
+}
+
+.time {
+    font-size : small;
+}
+
+.solution {
+    color: red;
+}

@@ -1,0 +1,56 @@
+#!/usr/bin/python
+
+#  This Source Code Form is subject to the terms of the Mozilla Public
+#  License, v. 2.0. If a copy of the MPL was not distributed with this
+#  file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+#  Copyright (c) 2012-2013, Dennis Sun <dlsun@stanford.edu>
+
+# add OHMS package location to python path
+import os, sys, cgi, json
+PATH_TO_OHMS = os.path.expanduser("~/local/lib/python/")
+sys.path.insert(0, PATH_TO_OHMS)
+import ohms.web as web
+
+# check whether user is logged in
+student_id = os.environ.get("WEBAUTH_USER")
+referer = os.environ.get("HTTP_REFERER")
+if student_id==None or referer==None:
+    print "Status: 401 Unauthorized\n"
+    sys.exit()
+else:
+    referer = os.path.basename(referer)
+
+# routes depending on the refering page
+if referer in ["index.html",""]:
+    data = web.get_hw_list()
+    print 'Content-Type: application/json\n'
+    print json.dumps(data)
+
+elif referer[:9]=="view.html":
+    hw_id = referer.split("?")[-1][3:]
+    post_vars = cgi.FieldStorage()
+    action = post_vars.getvalue("action") 
+    if action=="load_homework":
+        data = web.get_homework(student_id,hw_id)
+    elif action=="load_response":
+        q_id = int(post_vars.getvalue("q_id")[1:])
+        data = web.get_response(student_id,hw_id,q_id)
+    elif action=="submit_response":
+        answers = json.loads(post_vars.getvalue("answers"))
+        q_id = int(post_vars.getvalue("q_id")[1:])
+        data = web.submit_response(answers,student_id,hw_id,q_id)
+    else:
+        print "Status: 400 Bad Request \n"
+        sys.exit()
+    print 'Content-Type: application/json\n'
+    print json.dumps(data)
+
+elif referer[:9]=="sols.html":
+    hw_id = referer.split("?")[-1][3:]
+    data = web.get_solutions(student_id,hw_id)
+    print 'Content-Type: application/json\n'
+    print json.dumps(data)
+    
+
+
