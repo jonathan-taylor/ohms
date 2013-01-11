@@ -101,5 +101,27 @@ You should be all ready to go! The homework files are
 located in the homeworks/ directory of the OHMS Python 
 package (i.e., $HOME/local/lib/python/ohms/homeworks). 
 If you write a file, it should automatically show up 
-when you point your web browser to OHMS. To set up the 
-database for this homework, run ohms_admin.py.
+when you point your web browser to OHMS. Right now, 
+only the example homeworks should show up.
+
+
+Setup
+=====
+
+Unfortunately, you still won't be able to submit any 
+answers to homeworks because the database is not 
+set up yet. To do this, go to $HOME/local/lib/python 
+and run 
+
+python ohms_admin.py
+
+Choose Option 2 and type in Example_Homework. This 
+will set up a database for Example_Homework in 
+your Google Drive account (check for yourself!). 
+Once the setup is complete, you should be able to 
+submit responses for Example_Homework to the 
+spreadsheet. Repeat for Example_Homework_2 and for 
+any homeworks that you may write.
+
+
+
