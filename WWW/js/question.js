@@ -211,6 +211,9 @@ var OHMS = (function(OHMS) {
 
 	var now = new Date();
 
+	// fetch all the answer elements
+	this.answers = this.element.find(".Answer");
+
 	// if no response has been submitted
 	if(data==null) {
 	    // unlock questions if due date has not passed
@@ -219,9 +222,6 @@ var OHMS = (function(OHMS) {
 	    // exit function
 	    return false;
 	}
-
-	// fetch all the answer elements
-	this.answers = this.element.find(".Answer");
 
 	// iterate over form elements, populating their value
 	for(var i=0; i<this.answers.size(); i++) {

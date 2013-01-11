@@ -4,19 +4,18 @@
 #
 #  Copyright (c) 2012-2013, Dennis Sun <dlsun@stanford.edu>
 #  Copyright (c) 2012, Julia Fukuyama <jaf88@stanford.edu>
-#-----------------------------------------------------------------
 
-from question import *
+from ohms.question import *
 import random
 from datetime import datetime
-from utils.normal import ZTestQuestion
+from ohms.utils.stats.normal_distribution import ZTestQuestion
 
 class Ch28Ex1(MultiPartQuestion):
     name = "Ch. 28 Review Exercise 1"
     text = '''You are drawing 100 times at random with replacement
     from a box. Fill in the blanks, using the options below.'''
     
-    class PartA(MCQuestion):
+    class PartA(MultipleChoice):
         text = '''To test the null hypothesis that the average of
         the box is 2, you would use:'''
         choices = ['the one-sample <i>z</i>-test',
@@ -27,7 +26,7 @@ class Ch28Ex1(MultiPartQuestion):
         answer = 0
         max_pts = [5]
         
-    class PartB(MCQuestion):
+    class PartB(MultipleChoice):
         text = r'''To test the null hypothesis that the box is
         \(\fbox{\(\fbox{1}\fbox{2}\fbox{3}\)}\), you would use:'''
         choices = ['the one-sample <i>z</i>-test',
@@ -116,7 +115,7 @@ class Ch28Ex2(MultiPartQuestion):
         exact_match = False
         answer = [[153.5],[3],[0],[0.5]]
 
-    class PartIII(MCQuestion):
+    class PartIII(MultipleChoice):
 
         text = r'''Could a simple random sample from the county show a distribution
         of education level so different from the county-wide one? Choose one option
@@ -172,7 +171,7 @@ sample of 50,000 households out of 100 million households.</p>
         list_type = 'i'
         text = "First, let's set up a box model for this problem."
 
-        class PartI(MCQuestion):
+        class PartI(MultipleChoice):
             text = r'''The box contains:'''
             choices = ['''100 million tickets with either 0 or 1, with 1 indicating households that have experienced a burglary in the past year''',
         '''50,000 tickets with either 0 or 1, with 1 indicating households that have experienced a burglary in the past year''',
@@ -182,7 +181,7 @@ sample of 50,000 households out of 100 million households.</p>
             max_pts = [2]
         
 
-        class PartII(MCQuestion):
+        class PartII(MultipleChoice):
             text = r'''What test is appropriate here?'''
             choices = ['''A 1-sample <i>z</i>-test testing the hypothesis
             that 3% of households have experienced a burglary in the past
@@ -212,7 +211,7 @@ sample of 50,000 households out of 100 million households.</p>
             max_pts = [2,2]
 
 
-    class PartC(MCQuestion):
+    class PartC(MultipleChoice):
     	text = r'''What do you conclude?'''
         choices = ['''The difference between 2 and 3% is well within the range expected by chance.''',
                    '''The difference between 2 and 3% is almost impossible to explain by chance&mdash;many burglaries are not reported to the police''']
@@ -229,19 +228,19 @@ class Ch29Ex34(MultiPartQuestion):
     name = "Ch 29 Review Exercise 34"
     text = r'''A statistician tosses a coin 100 times and gets 60 heads. His null hypothesis says that the coin is fair; the alternative, that the coin is biased&mdash;the probability of landing heads is more than 50%.'''
     
-    class PartA(TFQuestion):
+    class PartA(TrueFalse):
         text = r'''If the coin is fair, the chance of getting 60 or more heads is about 3%.'''
         answer = "t"
         max_pts = [2]
         solution = 'true (section 18.4)'
 
-    class PartB(TFQuestion):
+    class PartB(TrueFalse):
         text = r'''Given that it lands heads 60 times, there is only about a 3% chance for the coin to be fair.'''
         answer = 'f'
         max_pts = [2]
         solution = 'false (pp. 480-81)'
 
-    class PartC(TFQuestion):
+    class PartC(TrueFalse):
         text = r'''Given that it lands heads 60 times, there is about a 97% chance for the coin to be biased.'''
         answer = 'f'
         max_pts = [2]
@@ -284,7 +283,7 @@ two groups described.</p>
             two_sided = "either"
             max_pts = [1,1]
             
-        class PartII(MCQuestion):
+        class PartII(MultipleChoice):
             text = "What do you conclude? (<b>Suggestion:</b> Think about whether this is a good or a bad thing.)"
             choices = ['''The intervention and control groups had similar diastolic blood pressures before the study began. Any difference is explainable by chance.''',
                        '''The intervention and control groups had significantly different diastolic blood pressures even before the study began.''']
@@ -306,7 +305,7 @@ two groups described.</p>
             two_sided = "either"
             max_pts = [1,1]
 
-        class PartII(MCQuestion):
+        class PartII(MultipleChoice):
             text = "What do you conclude?"
             choices = ['''There is no evidence that the intervention reduces subjects' diastolic blood pressure.''',
                        '''The intervention significantly reduces subjects' diastolic blood pressure.''']
@@ -328,7 +327,7 @@ two groups described.</p>
             two_sided = "either"
             max_pts = [1,1]
 
-        class PartII(MCQuestion):
+        class PartII(MultipleChoice):
             text = "What do you conclude? (<b>Suggestion:</b> Think about whether this is a good or a bad thing.)"
             choices = ['''The intervention and control groups had similar serum cholesterol levels before the study began. Any difference is explainable by chance.''',
                        '''The intervention and control groups had significantly different serum cholesterol levels even before the study began.''']
@@ -349,7 +348,7 @@ two groups described.</p>
             two_sided = "either"
             max_pts = [1,1]
 
-        class PartII(MCQuestion):
+        class PartII(MultipleChoice):
             text = "What do you conclude?"
             choices = ['''There is no evidence that the intervention reduces subjects' serum cholesterol levels.''',
                        '''The intervention significantly reduces subjects' serum cholesterol levels.''']
@@ -370,7 +369,7 @@ two groups described.</p>
             two_sided = "either"
             max_pts = [1,1]
 
-        class PartII(MCQuestion):
+        class PartII(MultipleChoice):
             text = "What do you conclude? (<b>Suggestion:</b> Think about whether this is a good or a bad thing.)"
             choices = ['''The intervention and control groups had similar smoking habits before the study began. Any difference is explainable by chance.''',
                        '''The intervention and control groups differed significantly in their smoking habits before the study began.''']
@@ -390,7 +389,7 @@ two groups described.</p>
             two_sided = "either"
             max_pts = [1,1]
 
-        class PartII(MCQuestion):
+        class PartII(MultipleChoice):
             text = "What do you conclude?"
             choices = ['''There is no evidence that the intervention affects subjects' smoking habits.''',
                        '''The intervention significantly discourages smoking.''']
@@ -412,7 +411,7 @@ two groups described.</p>
             two_sided = "either"
             max_pts = [1,1]
 
-        class PartII(MCQuestion):
+        class PartII(MultipleChoice):
             text = "What do you conclude?"
             choices = ['''There is no evidence that the intervention affects mortality rate.''',
                        '''The intervention significantly reduces mortality rate.''']
@@ -459,11 +458,10 @@ strong one? Discuss briefly, making sure to address <b>both</b> questions.</p>
 
 homework = Homework(name='Example Homework 2',
                     text = r'''
-<p><b>Materials</b> (opens in new window): 
-<a href='../restricted/normal.pdf' target='_blank'>Normal Table</a></p>
+<p><b>Materials</b> (opens in new window): <a href='../../restricted/normal.pdf' target='_blank'>Normal Table</a></p>
 ''',
                     questions=[Ch28Ex1,Ch28Ex2,Ch29Ex4,Ch29Ex33,
                     Ch29Ex34,Ch29Ex35,Ch29Ex39],
-                    due_date=datetime(2012,11,30,23,59,59))
+                    due_date=datetime(2013,11,30,23,59,59))
 
 
