@@ -7,6 +7,7 @@ Introduction
 
 This package provides the code necessary to deploy an 
 online homework system on Stanford's AFS servers. 
+Check out a demo [here](http://www.stanford.edu/~dlsun/ohms/).
 
 
 Code Overview
