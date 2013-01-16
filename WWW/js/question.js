@@ -128,6 +128,9 @@ var OHMS = (function(OHMS) {
 	    } else if (data.type === "ShortAnswer") {
 		var answer = new OHMS.ShortAnswer(this,data);
 		context.append(answer.element);
+	    } else if (data.type === "LaTeXAnswer") {
+		var answer = new OHMS.LaTeXAnswer(this,data);
+		context.append(answer.element);
 	    } else {
 		context.append(data.text);
 	    }

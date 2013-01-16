@@ -61,7 +61,7 @@ def get_hw_list():
     hw_list.sort(key=lambda x: x[0])
     return { "hw_list": [x[1] for x in hw_list] }
 
-def get_homework(student_id,hw_id):
+def get_homework(student_id,hw_id,student_name=""):
     # import the appropriate homework
     homework = import_homework(hw_id)
     if not homework:
@@ -78,6 +78,7 @@ def get_homework(student_id,hw_id):
             } for q in questions]
     # return homework name and question data
     return {
+        "student_name": student_name,
         "name": homework.name, 
         "due_date" : homework.due_date.strftime("%m/%d/%Y %H:%M:%S"), 
         "questions": qs 

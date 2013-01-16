@@ -15,7 +15,10 @@ $(document).ready(function() {
 
 	    var now = new Date();
 	    $(".loading").remove();
-	    
+
+	    $("#studentName").html("You are logged in as <strong>" +
+				   data["student_name"] + "</strong>.");
+
 	    var homeworks = data["hw_list"];
 	    for(var i=0; i<homeworks.length; i++) {
 		var hw = homeworks[i];
@@ -37,7 +40,7 @@ $(document).ready(function() {
 		alert("Error: You may have been logged out. Please refresh the page and try again.");
 	    } else {
 		alert("Internal Server Error: Please contact a system administrator.");
-		console.log(jqXHR);
+		console.log(jqXHR.responseText);
 	    }
 	},
     });
