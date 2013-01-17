@@ -122,6 +122,18 @@ class ShortAnswer(Question):
         return {"scores": [""], "comments": [""]}
 
 
+class LaTeXAnswer(ShortAnswer):
+
+    def to_JSON(self,solution=False):
+        json = {
+            "type": "LaTeXAnswer",
+            "text": self.text,
+            "max_pts": self.max_pts[0],
+            }
+        if solution: json['solution'] = {"text": self.solution}
+        return json
+
+
 class TrueFalse(Question):
     """
     Basic True/False question
