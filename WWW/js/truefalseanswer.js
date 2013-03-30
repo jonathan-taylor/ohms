@@ -23,9 +23,9 @@ var OHMS = (function(OHMS) {
 data-switch='true' data-toggle='buttons-radio'/>");
 
 	this.element.html("\
-  <button type='button' class='btn btn-mini' value='t' disabled> \
+  <button type='button' class='btn btn-mini' value='T' disabled> \
       True</button>                                                     \
-  <button type='button' class='btn btn-mini' value='f' disabled> \
+  <button type='button' class='btn btn-mini' value='F' disabled> \
       False</button>");
 
     }

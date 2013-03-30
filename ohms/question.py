@@ -81,11 +81,16 @@ class MultiPartQuestion(Question):
         comments = []
         end = 0
         for i, part in enumerate(self.active_parts):
+            # extract responses corresponding to current part
             start = end
             end = start + part.num_answers
-            out = part.check(responses[start:end])
+            resp = responses[start:end]
+            # call the check method for that part
+            out = part.check(resp)
             scores.extend(out['scores'])
             comments.extend(out['comments'])
+            # write any changes to the answer back
+            responses[start:end] = resp
         return { "scores": scores, "comments": comments }
 
 
@@ -154,10 +159,14 @@ class TrueFalse(Question):
 
 
     def check(self,responses,student_id=None):
-        # check the true/false question
-        score = (responses[0]==self.answer)*self.max_pts[0]
-        comment = self.comment_if_wrong if not score else ""
-        return { "scores": [score], "comments": [comment] }
+        if responses[0] not in ["T","F"]:
+            responses[0] = ""
+            return { "scores": [0], "comments": [""] }
+        else:
+            # check the true/false question
+            score = (responses[0]==self.answer.upper())*self.max_pts[0]
+            comment = self.comment_if_wrong if not score else ""
+            return { "scores": [score], "comments": [comment] }
 
 
 class TrueFalseWithExplanation(MultiPartQuestion):
@@ -220,6 +229,7 @@ class MultipleChoice(Question):
         try:
             response = int(responses[0])
         except:
+            responses[0] = ""
             return {"scores": [0], "comments": [""]}
         response = int(responses[0])
         score = self.max_pts[0] * (response==self.answer)
