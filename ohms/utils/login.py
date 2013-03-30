@@ -7,7 +7,7 @@
 from ohms.config import PATH_TO_GDATA,GMAIL_EMAIL,GMAIL_PW
 import sys
 sys.path.insert(0,PATH_TO_GDATA)
-from gdata.spreadsheet.text_db import Database,DatabaseClient
+from gdata.spreadsheet.text_db import DatabaseClient
 
 client = DatabaseClient(GMAIL_EMAIL,GMAIL_PW)
 

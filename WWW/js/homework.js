@@ -16,7 +16,7 @@ var OHMS = (function(OHMS) {
 
 	MathJax.Hub.Config({
 	    tex2jax: {
-		inlineMath: [['\\(','\\)']],
+		inlineMath: [['$','$'], ['\\(','\\)']],
 		processEscapes: true,
 		skipTags: ["script","noscript","style","textarea","code"]
 	    }
@@ -31,6 +31,15 @@ var OHMS = (function(OHMS) {
     Homework.prototype.set_homework_name = function (name) {
 	this.homework_name = name;
 	this.element.children("#homework_name").text(name);
+    }
+
+    Homework.prototype.get_homework_text = function () {
+	return this.homework_text;
+    }
+
+    Homework.prototype.set_homework_text = function (text) {
+	this.homework_text = text;
+	this.element.children("#homework_text").html(text);
     }
 
     Homework.prototype.get_due_date = function () {
@@ -65,6 +74,7 @@ var OHMS = (function(OHMS) {
 
 	// set metadata associated with homework
 	this.set_homework_name(data["name"]);
+	this.set_homework_text(data["text"]);
 	this.set_due_date(data["due_date"]);
 
 	// get elements
