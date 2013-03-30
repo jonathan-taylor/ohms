@@ -21,7 +21,7 @@ class Answer(object):
 class String(Answer):
 
     def cast(self,response):
-        return super(String,self).cast(response.rstrip())
+        return super(String,self).cast(response.lstrip().rstrip())
 
 
 class NumberAnswer(Answer):
@@ -55,3 +55,7 @@ class MultipleChoiceAnswer(Answer):
     def __init__(self,choices):
         self.choices = choices
 
+class FileUploadAnswer(Answer):
+
+    def __init__(self,encoding):
+        self.encoding = encoding

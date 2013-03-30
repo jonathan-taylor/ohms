@@ -14,6 +14,7 @@ import ohms.web as web
 
 # check whether user is logged in
 student_id = os.environ.get("WEBAUTH_USER")
+student_name = os.environ.get("WEBAUTH_LDAP_DISPLAYNAME")
 referer = os.environ.get("HTTP_REFERER")
 if student_id==None or referer==None:
     print "Status: 401 Unauthorized\n"
@@ -24,6 +25,7 @@ else:
 # routes depending on the refering page
 if referer in ["index.html",""]:
     data = web.get_hw_list()
+    data['student_name'] = student_name
     print 'Content-Type: application/json\n'
     print json.dumps(data)
 
@@ -32,12 +34,12 @@ elif referer[:9]=="view.html":
     post_vars = cgi.FieldStorage()
     action = post_vars.getvalue("action") 
     if action=="load_homework":
-        data = web.get_homework(student_id,hw_id)
+        data = web.get_homework(student_id,hw_id,student_name)
     elif action=="load_response":
         q_id = int(post_vars.getvalue("q_id")[1:])
         data = web.get_response(student_id,hw_id,q_id)
     elif action=="submit_response":
-        answers = json.loads(post_vars.getvalue("answers"))
+        answers = post_vars.getlist("answers")
         q_id = int(post_vars.getvalue("q_id")[1:])
         data = web.submit_response(answers,student_id,hw_id,q_id)
     else:
@@ -51,6 +53,9 @@ elif referer[:9]=="sols.html":
     data = web.get_solutions(student_id,hw_id)
     print 'Content-Type: application/json\n'
     print json.dumps(data)
-    
 
-
+elif referer=="grades.html":
+    data = web.get_grades(student_id)
+    data['student_name'] = student_name
+    print 'Content-Type: application/json\n'
+    print json.dumps(data)

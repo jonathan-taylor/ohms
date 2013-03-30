@@ -46,9 +46,16 @@ def update_grades():
     homework,hw_id = get_homework()
     hw_db = client.GetDatabases(name=homework.name)[0]
     grades_db = client.GetDatabases(name=GRADEBOOK_NAME)[0]
-    grades = grades_db.GetTables(worksheet_id="od6")[0]
-    hw_name = "".join(ch for ch in hw_id.lower() if ch.isalnum())
+    grades = grades_db.GetTables(name="")[0]
     records = grades.FindRecords("")
+
+    # fetch homework name and if not in gradebook, add it 
+    hw_name = "".join(ch for ch in hw_id.lower() if ch.isalnum())
+    grades.LookupFields() # this sets grades.fields
+    if hw_name not in grades.fields:
+        print 'Adding entry for %s in gradebook...' % hw_name
+        grades.fields.append(hw_name)
+        grades.SetFields(grades.fields)
 
     print 'Getting records...'
     # for each student

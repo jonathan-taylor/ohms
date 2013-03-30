@@ -9,6 +9,7 @@ import os,sys
 from ohms.utils.login import client
 from ohms.utils.seed import get_seed
 from ohms.answer import Answer
+from ohms.config import GRADEBOOK_NAME
 from datetime import datetime, timedelta
 
 def import_homework(hw_id):
@@ -61,7 +62,7 @@ def get_hw_list():
     hw_list.sort(key=lambda x: x[0])
     return { "hw_list": [x[1] for x in hw_list] }
 
-def get_homework(student_id,hw_id):
+def get_homework(student_id,hw_id,student_name=""):
     # import the appropriate homework
     homework = import_homework(hw_id)
     if not homework:
@@ -78,7 +79,9 @@ def get_homework(student_id,hw_id):
             } for q in questions]
     # return homework name and question data
     return {
-        "name": homework.name, 
+        "student_name": student_name,
+        "name": homework.name,
+        "text": homework.text,
         "due_date" : homework.due_date.strftime("%m/%d/%Y %H:%M:%S"), 
         "questions": qs 
         }
@@ -167,7 +170,7 @@ def submit_response(answers,student_id,hw_id,q_id):
             sys.exit()
     # validate answer by calling "check" method of question
     try:
-        output = q.check(answers)
+        output = q.check(answers,student_id)
     except:
         print "Status: 400 Bad Request\n"
         sys.exit()
@@ -199,3 +202,24 @@ def submit_response(answers,student_id,hw_id,q_id):
         "comments" : comments
         }
             
+def get_grades(student_id):
+    """
+    Retrieve grades for student from gradebook.
+    """
+    sp_id,wk_id = fetch_hw_ids(GRADEBOOK_NAME,0)
+    grades = fetch_responses(student_id,sp_id,wk_id)
+    maximum = fetch_responses("MAX",sp_id,wk_id)
+    if not grades:
+        return {}
+    homeworks = []
+    for hw, max_pts in maximum[0].content.iteritems():
+        if max_pts and hw != "id":
+            score = grades[0].content[hw]
+            homeworks.append({
+                    "homework": hw,
+                    "score": score,
+                    "max": max_pts
+                    })
+    return { "grades": homeworks }
+
+

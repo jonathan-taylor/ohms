@@ -5,7 +5,9 @@
 #  Copyright (c) 2012-2013, Dennis Sun <dlsun@stanford.edu>
 
 import random
-from answer import Answer,String,Float,TrueFalseAnswer,Text,MultipleChoiceAnswer
+from answer import Answer,String,Float,TrueFalseAnswer,Text,MultipleChoiceAnswer,FileUploadAnswer
+from ohms.config import FILE_UPLOAD_DIR
+import os
 
 class Homework(object):
 
@@ -50,7 +52,7 @@ class Question(object):
             cast_responses.append(answer.cast(responses[i]))
         return cast_responses
 
-    def check(self,responses):
+    def check(self,responses,student_id=None):
         """
         Check answers, returning a dict of scores and comments
         """
@@ -84,7 +86,7 @@ class MultiPartQuestion(Question):
         if solution: json['solution'] = {}
         return json
 
-    def check(self,responses):
+    def check(self,responses,student_id=None):
         scores = []
         comments = []
         end = 0
@@ -118,8 +120,20 @@ class ShortAnswer(Question):
         if solution: json['solution'] = {"text": self.solution}
         return json
 
-    def check(self,responses):
+    def check(self,responses,student_id=None):
         return {"scores": [""], "comments": [""]}
+
+
+class LaTeXAnswer(ShortAnswer):
+
+    def to_JSON(self,solution=False):
+        json = {
+            "type": "LaTeXAnswer",
+            "text": self.text,
+            "max_pts": self.max_pts[0],
+            }
+        if solution: json['solution'] = {"text": self.solution}
+        return json
 
 
 class TrueFalse(Question):
@@ -149,7 +163,7 @@ class TrueFalse(Question):
         return json
 
 
-    def check(self,responses):
+    def check(self,responses,student_id=None):
         # cast all answers to the appropriate type
         responses = self.cast(responses)
         # check the true/false question
@@ -214,7 +228,7 @@ class MultipleChoice(Question):
             }
         return json
 
-    def check(self,responses):
+    def check(self,responses,student_id=None):
         responses = self.cast(responses)
         score = self.max_pts[0] * (responses[0]==self.answer)
         if self.comments_by_choice:
@@ -310,7 +324,7 @@ class FillInTheBlank(Question):
             }
         return json
 
-    def check(self,responses):
+    def check(self,responses,student_id=None):
         # cast all responses to their appropriate type
         responses = self.cast(responses)
         # calculate the score for each blank
@@ -354,4 +368,34 @@ class FillInTheBlank(Question):
             scores.append(score)
             comments.append("") # not doing anything for comments right now
         return {"scores": scores, "comments": comments}
+
+class FileUpload(Question):
+
+    encoding = "b"
+
+    def __init__(self,seed):
+        self.answers = [FileUploadAnswer(self.encoding)]
+
+    def to_JSON(self,solution=False):
+        json = {
+            "type": "FileUpload",
+            "text": self.text,
+            "max_pts": self.max_pts[0],
+            }
+        if solution: json['solution'] = {
+            "text": self.solution,
+            }
+        return json
+
+    def check(self,responses,student_id=None):
+        if responses[0]:
+            filename = os.path.join(FILE_UPLOAD_DIR,
+                                    self.__class__.__name__ + "_" + str(student_id))
+            fout = open(filename,'w'+self.encoding)
+            fout.write(responses[0])
+            fout.close()
+            responses[0] = "File uploaded successfully!"
+        else:
+            responses[0] = ""
+        return {"scores": [""], "comments": [responses[0]]}
 

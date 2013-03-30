@@ -128,6 +128,12 @@ var OHMS = (function(OHMS) {
 	    } else if (data.type === "ShortAnswer") {
 		var answer = new OHMS.ShortAnswer(this,data);
 		context.append(answer.element);
+	    } else if (data.type === "FileUpload") {
+		var answer = new OHMS.FileUploadAnswer(this,data);
+		context.append(answer.element);
+	    } else if (data.type === "LaTeXAnswer") {
+		var answer = new OHMS.LaTeXAnswer(this,data);
+		context.append(answer.element);
 	    } else {
 		context.append(data.text);
 	    }
@@ -145,7 +151,7 @@ var OHMS = (function(OHMS) {
 	var comments_list = $("<ul/>");
 	for(var i=0; i<comments.length; i++) {
 	    if(comments[i])
-		comments_list.append("<li>" + comments[i] + "</li>");
+		comments_list.append("<li>" + comments[i].replace(/\n/g,'<br />') + "</li>");
 	}
 	this.element.find(".comments").empty().append(comments_list);
     }
@@ -268,22 +274,22 @@ var OHMS = (function(OHMS) {
 
     Question.prototype.submit_response = function () {
 	this.lock_question();
-	var answers = []
-	for (var i=0; i<this.answers.size(); i++) {
-	    answers[i] = this.answers.eq(i).data("answer").get_value();
+	var answers = this.answers;
+	var that = this;
+	var data = new FormData();
+	data.append("action","submit_response");
+	data.append("q_id",this.element.attr("id"));
+	for (var i=0; i<answers.size(); i++) {
+	    data.append("answers",answers.eq(i).data("answer").get_value());
 	}
-	$.ajax({
-	    url : ROUTE_FILE,
-	    type : "POST",
-	    data : {
-		action : "submit_response",
-		q_id : this.element.attr("id"),
-		answers : JSON.stringify(answers)
-	    },
-	    dataType : "json",
-	    success : $.proxy(this.submit_response_success,this),
-	    error : this.submit_response_error,
-	});
+	var req = new XMLHttpRequest();
+	req.open("POST",ROUTE_FILE,true);
+	req.onload = function (event) {
+	    data = JSON.parse(event.target.response);
+	    $.proxy(that.submit_response_success,that)(data);
+	}
+	req.onerror = this.submit_response_error;
+	req.send(data);
     }
 
     Question.prototype.submit_response_success = function (data) {

@@ -10,3 +10,4 @@ PATH_TO_GDATA = os.path.expanduser("~/local/lib/python/")
 GMAIL_EMAIL = "XXX@gmail.com"
 GMAIL_PW = "XXX"
 GRADEBOOK_NAME = "Gradebook"
+FILE_UPLOAD_DIR = os.path.expanduser("~/uploads")
