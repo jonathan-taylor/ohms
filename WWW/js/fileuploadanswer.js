@@ -17,29 +17,6 @@ var OHMS = (function(OHMS) {
 
     FileUploadAnswer.prototype = new OHMS.Answer();
 
-/*
-    FileUploadAnswer.prototype.bind_events = function () {
-	var that = this;
-	var q = this.question;
-	q.element.find(".submit").click(function () {
-	    var data = new FormData();
-	    data.append("action","upload_file");
-	    data.append("q_id",q.get_question_id());
-	    data.append("file",that.get_file.files[0]);
-	    var req = new XMLHttpRequest();
-	    req.open("POST",ROUTE_FILE,true);
-	    req.onload = function(event) {
-		console.log(event);
-		if(req.status === 200)
-		    that.element.find(".msg").text("File uploaded!");
-		else
-		    that.element.find(".msg").text("Error in uploading file.");
-	    }
-	    req.send(data);
-	})
-    }
-*/
-
     FileUploadAnswer.prototype.get_file = function () {
 	return this.element.get(0);
     }

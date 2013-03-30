@@ -208,9 +208,14 @@ var OHMS = (function(OHMS) {
 	});
     }
 
-    Question.prototype.load_response_error = function (xhr, textStatus,
+    Question.prototype.load_response_error = function (jqXHR, textStatus,
     errorThrow) {
-	console.log(xhr.responseText);
+	if (jqXHR.status == 403) {
+	    alert("Error: It appears that the homework is not tied to a \
+database. The admin should set up a database or update the database IDs.");
+	} else {
+	    alert("There was an error loading some of your previous responses.");
+	}
     }
 
     Question.prototype.load_response_success = function (data) {
@@ -299,8 +304,22 @@ var OHMS = (function(OHMS) {
 	this.unlock_question_if_possible();
     }
 
-    Question.prototype.submit_response_error = function (xhr) {
-	console.log(xhr.responseText);
+    Question.prototype.submit_response_error = function (jqXHR) {
+	if (jqXHR.status == 400) {
+	    alert("There was an error recording your response. The \
+response was not in the expected format.");
+	} else if (jqXHR.status == 401) {
+	    alert("There was an error recording your response. You \
+may have been logged out? Save your work and try refreshing the page.");
+	} else if (jqXHR.status == 410) {
+	    alert("There was an error recording your response. The \
+deadline has passed.");
+	} else if (jqXHR.status == 423) {
+	    alert("There was an error recording your response. You \
+have made too many submissions.");
+	} else {
+	    alert("There was an error submitting your response. Please try again.");
+	}
     }
 
     OHMS.Question = Question;

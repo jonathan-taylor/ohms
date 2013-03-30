@@ -36,11 +36,8 @@ $(document).ready(function() {
 	    }
 	},
 	error: function(jqXHR,textStatus,errorThrown) {
-	    if(textStatus.status==401) {
+	    if(jqXHR.status==401) {
 		alert("Error: You may have been logged out. Please refresh the page and try again.");
-	    } else {
-		alert("Internal Server Error: Please contact a system administrator.");
-		console.log(jqXHR.responseText);
 	    }
 	},
     });

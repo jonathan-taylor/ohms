@@ -62,8 +62,13 @@ var OHMS = (function(OHMS) {
     }
 
     Homework.prototype.load_homework_error =
-    function(xhr,textStatus,errorThrow) {
-	console.log(xhr.responseText);
+    function(jqXHR,textStatus,errorThrow) {
+	if(jqXHR.status==404) {
+	    alert("Error: The homework you requested was not found.");
+	} else {
+	    alert("There was an error loading the homework \
+you requested. Try refreshing the page.");
+	}
     }
 
     Homework.prototype.load_homework_success = function(data) {
