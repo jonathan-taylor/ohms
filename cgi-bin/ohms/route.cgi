@@ -50,7 +50,7 @@ elif referer[:9]=="view.html":
 
 elif referer[:9]=="sols.html":
     hw_id = referer.split("?")[-1][3:]
-    data = web.get_solutions(student_id,hw_id)
+    data = web.get_solutions(student_id,hw_id,student_name)
     print 'Content-Type: application/json\n'
     print json.dumps(data)
 
