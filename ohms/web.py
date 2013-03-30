@@ -79,7 +79,6 @@ def get_homework(student_id,hw_id,student_name=""):
             } for q in questions]
     # return homework name and question data
     return {
-        "student_name": student_name,
         "name": homework.name,
         "text": homework.text,
         "due_date" : homework.due_date.strftime("%m/%d/%Y %H:%M:%S"), 
@@ -108,7 +107,6 @@ def get_solutions(student_id,hw_id,student_name=""):
             } for q in questions]
     # return homework name and question data
     return {
-        "student_name": student_name,
         "name": hw.name, 
         "text": hw.text,
         "due_date" : hw.due_date.strftime("%m/%d/%Y %H:%M:%S"), 

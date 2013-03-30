@@ -214,19 +214,19 @@ var OHMS = (function(OHMS) {
 	    alert("Error: It appears that the homework is not tied to a \
 database. The admin should set up a database or update the database IDs.");
 	} else {
-	    alert("There was an error loading some of your previous responses.");
+	    alert("There was an error loading your previous response to a question.");
 	}
     }
 
     Question.prototype.load_response_success = function (data) {
 
-	var now = new Date();
+	var now = new Date(data.current_time);
 
 	// fetch all the answer elements
 	this.answers = this.element.find(".Answer");
 
 	// if no response has been submitted
-	if(data==null) {
+	if(data.last_time === undefined) {
 	    // unlock questions if due date has not passed
 	    if(now.getTime() <= this.homework.due_date.getTime())
 		this.unlock_question();
@@ -249,7 +249,7 @@ database. The admin should set up a database or update the database IDs.");
 	// print the timestamps of last two submissions
 	this.set_time(data.last_time, data.last_last_time);
 	// unlock the question if user can resubmit
-	this.unlock_question_if_possible();
+	this.unlock_question_if_possible(now);
     }
 
     Question.prototype.lock_question = function () {
@@ -268,8 +268,7 @@ database. The admin should set up a database or update the database IDs.");
 
     // this unlocks a question only if it's been 6 hours since the 
     // next-to-last submission and homework deadline hasn't passed
-    Question.prototype.unlock_question_if_possible = function () {
-	var now = new Date();
+    Question.prototype.unlock_question_if_possible = function (now) {
 	var lastLastTime = new Date(this.last_last_time);
 	var h = 6;
 	if (now.getTime() > lastLastTime.getTime()+(h*3600000) &&
@@ -301,20 +300,21 @@ database. The admin should set up a database or update the database IDs.");
 	this.set_time(data.last_time, data.last_last_time);
 	this.set_score(data.points);
 	this.set_comments(data.comments);
-	this.unlock_question_if_possible();
+	var now = new Date(data.current_time);
+	this.unlock_question_if_possible(now);
     }
 
     Question.prototype.submit_response_error = function (jqXHR) {
-	if (jqXHR.status == 400) {
+	if (jqXHR.status === 400) {
 	    alert("There was an error recording your response. The \
 response was not in the expected format.");
-	} else if (jqXHR.status == 401) {
+	} else if (jqXHR.status === 401) {
 	    alert("There was an error recording your response. You \
 may have been logged out? Save your work and try refreshing the page.");
-	} else if (jqXHR.status == 410) {
+	} else if (jqXHR.status === 410) {
 	    alert("There was an error recording your response. The \
 deadline has passed.");
-	} else if (jqXHR.status == 423) {
+	} else if (jqXHR.status === 423) {
 	    alert("There was an error recording your response. You \
 have made too many submissions.");
 	} else {
