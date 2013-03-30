@@ -8,7 +8,6 @@
 import os,sys
 from ohms.utils.login import client
 from ohms.utils.seed import get_seed
-from ohms.answer import Answer
 from ohms.config import GRADEBOOK_NAME
 from datetime import datetime, timedelta
 
@@ -127,10 +126,9 @@ def get_response(student_id,hw_id,q_id):
         return None
     # otherwise, fetch data from most recent response
     last = responses[-1].content
-    n_parts = len(q.answers)
-    answers = [last['ans%d' % i] for i in range(n_parts)]
-    comments = [last['comment%d' % i] for i in range(n_parts)]
-    points_raw = [last['score%d' % i] for i in range(n_parts)]
+    answers = [last['ans%d' % i] for i in range(q.num_answers)]
+    comments = [last['comment%d' % i] for i in range(q.num_answers)]
+    points_raw = [last['score%d' % i] for i in range(q.num_answers)]
     points = {
         "earned": sum(float(x) for x in points_raw if x),
         "graded": sum(q.max_pts[i] for i,x in enumerate(points_raw) if x),

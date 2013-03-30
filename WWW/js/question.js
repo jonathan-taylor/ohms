@@ -289,8 +289,12 @@ database. The admin should set up a database or update the database IDs.");
 	var req = new XMLHttpRequest();
 	req.open("POST",ROUTE_FILE,true);
 	req.onload = function (event) {
-	    data = JSON.parse(event.target.response);
-	    $.proxy(that.submit_response_success,that)(data);
+	    if(event.target.status === 200) {
+		data = JSON.parse(event.target.response);
+		$.proxy(that.submit_response_success,that)(data);
+	    } else {
+		that.submit_response_error(event.target.status);
+	    }
 	}
 	req.onerror = this.submit_response_error;
 	req.send(data);
@@ -304,22 +308,27 @@ database. The admin should set up a database or update the database IDs.");
 	this.unlock_question_if_possible(now);
     }
 
-    Question.prototype.submit_response_error = function (jqXHR) {
-	if (jqXHR.status === 400) {
+    Question.prototype.submit_response_error = function (status) {
+	if (status === 400) {
 	    alert("There was an error recording your response. The \
-response was not in the expected format.");
-	} else if (jqXHR.status === 401) {
+response was not in the expected format. Perhaps you entered a non-number \
+where a number was expected?");
+	    this.unlock_question();
+	} else if (status === 401) {
 	    alert("There was an error recording your response. You \
 may have been logged out? Save your work and try refreshing the page.");
-	} else if (jqXHR.status === 410) {
+	} else if (status === 410) {
 	    alert("There was an error recording your response. The \
 deadline has passed.");
-	} else if (jqXHR.status === 423) {
+	} else if (status === 423) {
 	    alert("There was an error recording your response. You \
 have made too many submissions.");
 	} else {
-	    alert("There was an error submitting your response. Please try again.");
+	    alert("There was an error submitting your response. Please \
+try again.");
+	    this.unlock_question();
 	}
+	
     }
 
     OHMS.Question = Question;

@@ -5,7 +5,6 @@
 #  Copyright (c) 2012-2013, Dennis Sun <dlsun@stanford.edu>
 
 import random
-from answer import Answer,String,Float,TrueFalseAnswer,Text,MultipleChoiceAnswer,FileUploadAnswer
 from ohms.config import FILE_UPLOAD_DIR
 import os
 
@@ -43,15 +42,6 @@ class Question(object):
         self.seed = seed
         random.seed(seed)
         
-    def cast(self,responses):
-        """
-        Cast each response to the appropriate type
-        """
-        cast_responses = []
-        for i, answer in enumerate(self.answers):
-            cast_responses.append(answer.cast(responses[i]))
-        return cast_responses
-
     def check(self,responses,student_id=None):
         """
         Check answers, returning a dict of scores and comments
@@ -70,12 +60,12 @@ class MultiPartQuestion(Question):
     def __init__(self,seed):
 #        self.set_seed(seed)
         self.active_parts = []
-        self.answers = []
+        self.num_answers = 0
         self.max_pts = []
         for i,part in enumerate(self.parts):
             self.active_parts.append(part(seed))
             self.max_pts.extend(self.active_parts[i].max_pts)
-            self.answers.extend(self.active_parts[i].answers)
+            self.num_answers += self.active_parts[i].num_answers
 
     def to_JSON(self,solution=False):
         json = {
@@ -92,7 +82,7 @@ class MultiPartQuestion(Question):
         end = 0
         for i, part in enumerate(self.active_parts):
             start = end
-            end = start + len(part.answers)
+            end = start + part.num_answers
             out = part.check(responses[start:end])
             scores.extend(out['scores'])
             comments.extend(out['comments'])
@@ -109,7 +99,7 @@ class ShortAnswer(Question):
     solution = ""
 
     def __init__(self,seed):
-        self.answers = [Text()]
+        self.num_answers = 1
     
     def to_JSON(self,solution=False):
         json = {
@@ -148,7 +138,7 @@ class TrueFalse(Question):
     solution = ""
 
     def __init__(self,seed):
-        self.answers = [TrueFalseAnswer()]
+        self.num_answers = 1
 
     def to_JSON(self,solution=False):
         json = {
@@ -164,8 +154,6 @@ class TrueFalse(Question):
 
 
     def check(self,responses,student_id=None):
-        # cast all answers to the appropriate type
-        responses = self.cast(responses)
         # check the true/false question
         score = (responses[0]==self.answer)*self.max_pts[0]
         comment = self.comment_if_wrong if not score else ""
@@ -212,7 +200,7 @@ class MultipleChoice(Question):
 
     def __init__(self,seed):
 #        self.set_seed(seed)
-        self.answers = [MultipleChoiceAnswer(self.choices)]
+        self.num_answers = 1
 
     def to_JSON(self,solution=False):
         json = {
@@ -229,10 +217,14 @@ class MultipleChoice(Question):
         return json
 
     def check(self,responses,student_id=None):
-        responses = self.cast(responses)
-        score = self.max_pts[0] * (responses[0]==self.answer)
+        try:
+            response = int(responses[0])
+        except:
+            return {"scores": [0], "comments": [""]}
+        response = int(responses[0])
+        score = self.max_pts[0] * (response==self.answer)
         if self.comments_by_choice:
-            comment = self.comments_by_choice[responses[0]]
+            comment = self.comments_by_choice[response]
         else:
             comment = ""
         return {"scores": [score], "comments": [comment]}
@@ -301,16 +293,14 @@ class FillInTheBlank(Question):
         # first create an array with 
         self.body = self.text.split("____")
         # insert an input box between every element of the list
-        answer_class = String if self.is_string else Float
-        self.answers = []
+        self.num_answers = len(self.body)-1
         j = 0
         while 2*j+1 < len(self.body):
             self.body.insert(2*j+1,{
-                    "type": answer_class.__name__,
+                    "type": "String" if self.is_string else "Float",
                     "max_pts": self.max_pts[j]
                     })
             j += 1
-            self.answers.append(answer_class())
 
     def to_JSON(self,solution=False):
         json = {
@@ -325,8 +315,6 @@ class FillInTheBlank(Question):
         return json
 
     def check(self,responses,student_id=None):
-        # cast all responses to their appropriate type
-        responses = self.cast(responses)
         # calculate the score for each blank
         scores = []
         comments = []
@@ -339,12 +327,16 @@ class FillInTheBlank(Question):
                 score = 0
                 # for strings, check if answer keyword is contained in student response
                 if self.is_string:
+                    # cast response to string, trimming white space
+                    response = unicode(response.strip())
                     for keyword in self.answer[i]:
                         if keyword in response:
                             score = self.max_pts[i]
                             break
                 # for floats...
                 else:
+                    # cast response to float
+                    response = float(response) if response else float('inf')
                     # iterate over the acceptable answers
                     for poss_answer in self.answer[i]:
                         # if possible answer is a range, i.e. tuple (a,b)
@@ -374,7 +366,7 @@ class FileUpload(Question):
     encoding = "b"
 
     def __init__(self,seed):
-        self.answers = [FileUploadAnswer(self.encoding)]
+        self.num_answers = 1
 
     def to_JSON(self,solution=False):
         json = {

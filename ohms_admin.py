@@ -33,7 +33,7 @@ def create_database(homework):
     for (i,q) in enumerate(homework.questions):
         print 'Creating Question %d...' % (i+1)
         fields = ['id','timestamp']
-        for j in range(len(q(0).answers)):
+        for j in range(q(0).num_answers):
             fields.extend(['ans%d' % j,'score%d' % j,'comment%d' % j])
         spreadsheet.CreateTable('Question%d' % (i+1),fields)
 
