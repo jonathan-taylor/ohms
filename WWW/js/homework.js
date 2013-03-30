@@ -13,6 +13,15 @@ var OHMS = (function(OHMS) {
 	this.element.data("homework",this);
 	this.homework_name = null;
 	this.due_date = null;
+
+	MathJax.Hub.Config({
+	    tex2jax: {
+		inlineMath: [['\\(','\\)']],
+		processEscapes: true,
+		skipTags: ["script","noscript","style","textarea","code"]
+	    }
+	});
+
     }
 
     Homework.prototype.get_homework_name = function () {
@@ -49,6 +58,10 @@ var OHMS = (function(OHMS) {
     }
 
     Homework.prototype.load_homework_success = function(data) {
+
+	// set student name
+	$("#studentName").html("You are logged in as <strong>" +
+			       data["student_name"] + "</strong>.");
 
 	// set metadata associated with homework
 	this.set_homework_name(data["name"]);
