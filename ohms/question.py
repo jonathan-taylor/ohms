@@ -21,6 +21,8 @@ class Question(object):
     name = ""
     parts = []
     solution = ""
+    submits_allowed = 2   # submissions allowed before lockout 
+    lockout_period = 6    # time of lockout period (in hours)
 
     def to_JSON(self,solution=False):
         json = {

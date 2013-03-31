@@ -13,8 +13,7 @@ var OHMS = (function(OHMS) {
 	this.homework = null;
 	this.answers = null;
 	// keep track of last 2 submission times
-	this.last_time = null;
-	this.last_last_time = null;
+	this.last_times = null;
 	// metadata for question
 	this.question_name = null;
 	this.question_id = null;
@@ -174,8 +173,8 @@ var OHMS = (function(OHMS) {
 	this.element.find(".score").html(score_string);
     }
 
-    Question.prototype.set_time = function (last_time, last_last_time) {
-	this.last_time = last_time;
+    Question.prototype.set_time = function (last_times) {
+	this.last_times = last_times;
 	if (last_last_time === null) {
 	    this.element.find(".time").html("(<strong>Last submission:</strong> "+last_time+")");
 	} else {

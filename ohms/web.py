@@ -134,13 +134,17 @@ def get_response(student_id,hw_id,q_id):
         "graded": sum(q.max_pts[i] for i,x in enumerate(points_raw) if x),
         "total": sum(q.max_pts)
         }
-    # get timestamp of last 2 entries if they exist
-    last_time = last['timestamp']
-    last_last_time = responses[-2].content['timestamp'] if len(responses)>1 else None
+    # get timestamp of last entries and determine if question is locked
+    last_times = [resp.content['timestamp'] for resp in responses]
+    is_locked = False
+    if len(last_times) >= q.submits_allowed:
+        last_time = datetime.strptime(last_times[-q.submits_allowed])
+        if curr_time < last_time + timedelta(hours=q.lockout_period):
+            is_locked = True
     # return response data for question
     return {
-        "last_last_time" : last_last_time,
-        "last_time" : last_time,
+        "last_times" : last_times,
+        "locked" : is_locked,
         "answers" : answers,
         "points" : points,
         "comments" : comments,
@@ -160,10 +164,10 @@ def submit_response(answers,student_id,hw_id,q_id):
     # query worksheet for all entries with given student_id
     responses = fetch_responses(student_id,sp_id,wk_id)
     # check if user has submitted 2 entries in last 6 hours
-    if len(responses) > 1:
-        last_last_time = responses[-2].content['timestamp']
-        last_last_time = datetime.strptime(last_last_time,'%m/%d/%Y %H:%M:%S')
-        if curr_time < last_last_time + timedelta(hours=6):
+    last_times = [resp.content['timestamp'] for resp in responses]
+    if len(last_times) >= q.submits_allowed:
+        last_time = datetime.strptime(last_times[-q.submits_allowed],'%m/%d/%Y %H:%M:%S')
+        if curr_time < last_time + timedelta(hours=q.lockout_period):
             print "Status: 423 Locked\n"
             sys.exit()
     # validate answer by calling "check" method of question
@@ -175,9 +179,10 @@ def submit_response(answers,student_id,hw_id,q_id):
     scores = output["scores"]
     comments = output["comments"]
     # package new response and submit it
+    last_times.append(curr_time.strftime("%m/%d/%Y %H:%M:%S"))
     new_response = {
         "id": student_id,
-        "timestamp": curr_time.strftime("%m/%d/%Y %H:%M:%S")
+        "timestamp": last_times[-1]
         }
     for i,ans in enumerate(answers):
         new_response['ans%d' % i] = unicode(ans)
@@ -192,10 +197,16 @@ def submit_response(answers,student_id,hw_id,q_id):
                       in [int,float]),
         "total": sum(q.max_pts)
         }
+    # determine if question should be locked
+    is_locked = False
+    if len(last_times) >= q.submits_allowed:
+        last_time = datetime.strptime(last_times[-q.submits_allowed],'%m/%d/%Y %H:%M:%S')
+        if curr_time < last_time + timedelta(hours=q.lockout_period):
+            is_locked = True
     # return response data
     return {
-        "last_last_time" : responses[-1].content['timestamp'] if responses else None,
-        "last_time" : new_response["timestamp"],
+        "last_times" : last_times,
+        "locked" : is_locked,
         "points" : points,
         "comments" : comments
         }
