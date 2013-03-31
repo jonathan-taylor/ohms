@@ -37,7 +37,7 @@ var OHMS = (function(OHMS) {
 
     MultipleResponseAnswer.prototype.show_solution = function () {
         var answers = this.solution.answer.split(",");
-        for (var i=0; i<this.choices.length; i++) {
+        for (var i=0; i<this.answers.length; i++) {
 	    this.element.find("input[value="+answers[i]+"]").attr("checked","checked");
         }
     }
@@ -46,24 +46,27 @@ var OHMS = (function(OHMS) {
 	return this.element.find("[value="+value+"]");
     }
 
-    MultipleChoiceAnswer.prototype.get_value = function () {
-	return this.element.find(":checked").val();
+    MultipleResponseAnswer.prototype.get_value = function () {
+	return $.makeArray(this.element.find(":checked").map(function(i,e) { return e.value; })).join();
     }
 
-    MultipleChoiceAnswer.prototype.set_value = function (value) {
-	this.get_element_by_value(value).attr("checked","checked");
+    MultipleResponseAnswer.prototype.set_value = function (value) {
+        var values = value.split(',') 
+        for (var i=0; i<this.values.length; i++) {
+	    this.get_element_by_value(values[i]).attr("checked","checked");
+        }
     }
 
-    MultipleChoiceAnswer.prototype.unlock_answer = function () {
+    MultipleResponseAnswer.prototype.unlock_answer = function () {
 	this.element.find("input").removeAttr("disabled");
     }
 
-    MultipleChoiceAnswer.prototype.lock_answer = function () {
+    MultipleResponseAnswer.prototype.lock_answer = function () {
 	this.element.find("input").attr("disabled","disabled");
     }
 
 
-    OHMS.MultipleChoiceAnswer = MultipleChoiceAnswer;
+    OHMS.MultipleResponseAnswer = MultipleResponseAnswer;
 
     return OHMS;
 
