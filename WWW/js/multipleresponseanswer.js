@@ -51,8 +51,8 @@ var OHMS = (function(OHMS) {
     }
 
     MultipleResponseAnswer.prototype.set_value = function (value) {
-        var values = value.split(',') 
-        for (var i=0; i<this.values.length; i++) {
+        var values = value.split(','); 
+        for (var i=0; i<values.length; i++) {
 	    this.get_element_by_value(values[i]).attr("checked","checked");
         }
     }
