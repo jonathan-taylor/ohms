@@ -182,7 +182,7 @@ var OHMS = (function(OHMS) {
 	if (n === 1) {
 	    this.element.find(".time").html("(<strong>Last submission:</strong> "+last_times[0]+")");
 	} else if(n > 1) {
-	    this.element.find(".time").html("(<strong>Last submissions:</strong> "+last_times[n-2]+" and "+last_time[n-1]+ ")");
+	    this.element.find(".time").html("(<strong>Last submissions:</strong> "+last_times[n-2]+" and "+last_times[n-1]+ ")");
 	}
     }
 

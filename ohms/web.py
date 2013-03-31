@@ -138,7 +138,8 @@ def get_response(student_id,hw_id,q_id):
     last_times = [resp.content['timestamp'] for resp in responses]
     is_locked = False
     if len(last_times) >= q.submits_allowed:
-        last_time = datetime.strptime(last_times[-q.submits_allowed])
+        last_time = datetime.strptime(last_times[-q.submits_allowed],'%m/%d/%Y %H:%M:%S')
+        curr_time = datetime.now()
         if curr_time < last_time + timedelta(hours=q.lockout_period):
             is_locked = True
     # return response data for question
