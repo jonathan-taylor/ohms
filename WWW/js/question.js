@@ -178,11 +178,11 @@ var OHMS = (function(OHMS) {
 
     Question.prototype.set_time = function (last_times) {
 	this.last_times = last_times;
-	if (last_last_time === null) {
-	    this.element.find(".time").html("(<strong>Last submission:</strong> "+last_time+")");
-	} else {
-	    this.last_last_time = last_last_time;
-	    this.element.find(".time").html("(<strong>Last submissions:</strong> "+last_last_time+" and "+last_time+ ")");
+	var n = this.last_times.length;
+	if (n === 1) {
+	    this.element.find(".time").html("(<strong>Last submission:</strong> "+last_times[0]+")");
+	} else if(n > 1) {
+	    this.element.find(".time").html("(<strong>Last submissions:</strong> "+last_times[n-2]+" and "+last_time[n-1]+ ")");
 	}
     }
 
@@ -228,7 +228,7 @@ database. The admin should set up a database or update the database IDs.");
 	this.answers = this.element.find(".Answer");
 
 	// if no response has been submitted
-	if(data.last_time === undefined) {
+	if(data.last_times === undefined) {
 	    // unlock questions if due date has not passed
 	    if(now.getTime() <= this.homework.due_date.getTime())
 		this.unlock_question();
@@ -249,9 +249,11 @@ database. The admin should set up a database or update the database IDs.");
 	// show comments
 	this.set_comments(data.comments);
 	// print the timestamps of last two submissions
-	this.set_time(data.last_time, data.last_last_time);
+	this.set_time(data.last_times);
 	// unlock the question if user can resubmit
-	this.unlock_question_if_possible(now);
+	if (!data.locked) {
+	    this.unlock_question();
+	}
     }
 
     Question.prototype.lock_question = function () {
@@ -266,16 +268,6 @@ database. The admin should set up a database or update the database IDs.");
 	    this.answers.eq(i).data("answer").unlock_answer();
 	}
 	this.element.find(".submit").removeAttr('disabled');
-    }
-
-    // this unlocks a question only if it's been 6 hours since the 
-    // next-to-last submission and homework deadline hasn't passed
-    Question.prototype.unlock_question_if_possible = function (now) {
-	var lastLastTime = new Date(this.last_last_time);
-	var h = 6;
-	if (now.getTime() > lastLastTime.getTime()+(h*3600000) &&
-	    now.getTime() <= this.homework.due_date.getTime())
-            this.unlock_question();
     }
 
     Question.prototype.submit_response = function () {
@@ -303,11 +295,12 @@ database. The admin should set up a database or update the database IDs.");
     }
 
     Question.prototype.submit_response_success = function (data) {
-	this.set_time(data.last_time, data.last_last_time);
+	this.set_time(data.last_times);
 	this.set_score(data.points);
 	this.set_comments(data.comments);
-	var now = new Date(data.current_time);
-	this.unlock_question_if_possible(now);
+	if (!data.locked) {
+	    this.unlock_question();
+	}
     }
 
     Question.prototype.submit_response_error = function (status) {
