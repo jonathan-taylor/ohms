@@ -160,7 +160,7 @@ var OHMS = (function(OHMS) {
 
     Question.prototype.set_score = function (points) {
 	if (points.earned == points.total) {
-	    var score_string = "<img src='img/checkmark.png' height="30" width="26"> Congrats! You've earned all \
+	    var score_string = "<img src='img/checkmark.png' height='30' width='26'> Congrats! You've earned all \
 <font color=green>" + points.total + "</font> points for this question.";
 	} else {
 	    points.missed = points.graded - points.earned;
