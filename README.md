@@ -77,8 +77,8 @@ already be set to your user home directory.
 
 NOTE: The CGI "user" may not have permissions to execute 
 scripts in $HOME. Make sure you give it the appropriate 
-permissions by executing "fs sa ... rlidwka". Contact 
-HelpSU if you have any questions about this.
+permissions by executing "fs sa . class-CLASSID-TERM.cgi rlidwka" 
+from $HOME. Contact HelpSU if you have any questions about this.
 
 Follow these steps to install OHMS:
 
