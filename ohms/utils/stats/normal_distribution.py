@@ -5,7 +5,6 @@
 #  Copyright (c) 2012-2013, Dennis Sun <dlsun@stanford.edu>
 
 from ohms.question import FillInTheBlank
-from ohms.answer import Answer
 from math import log10, floor, ceil, sqrt
 
 normal_table = {
