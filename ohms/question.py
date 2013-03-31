@@ -367,6 +367,13 @@ class FillInTheBlank(Question):
         scores = []
         comments = []
         for i, response in enumerate(responses):
+
+            # casting
+            if self.is_string:
+                response = unicode(response.rstrip())
+            else:
+                response = float(response) if response else float('inf')
+
             # if exact match, check that response is one of accepted answers
             if self.exact_match:
                 score = (response in self.answer[i])*self.max_pts[i]
@@ -375,16 +382,12 @@ class FillInTheBlank(Question):
                 score = 0
                 # for strings, check if answer keyword is contained in student response
                 if self.is_string:
-                    # cast response to string, trimming white space
-                    response = unicode(response.strip())
                     for keyword in self.answer[i]:
                         if keyword in response:
                             score = self.max_pts[i]
                             break
                 # for floats...
                 else:
-                    # cast response to float
-                    response = float(response) if response else float('inf')
                     # iterate over the acceptable answers
                     for poss_answer in self.answer[i]:
                         # if possible answer is a range, i.e. tuple (a,b)
