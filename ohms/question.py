@@ -25,14 +25,14 @@ class Question(object):
     lockout_period = 6    # time of lockout period (in hours)
 
     def to_JSON(self,solution=False):
-        json = {
+        data = {
             "text": self.text,
             "max_pts": self.max_pts
             }
-        if solution: json['solution'] = {
+        if solution: data['solution'] = {
             "text": self.solution
             }
-        return json
+        return data
 
         return None
 
@@ -70,13 +70,13 @@ class MultiPartQuestion(Question):
             self.num_answers += self.active_parts[i].num_answers
 
     def to_JSON(self,solution=False):
-        json = {
+        data = {
             "text": self.text,
             "parts": [p.to_JSON(solution) for p in self.active_parts],
             "list_type": self.list_type
             }
-        if solution: json['solution'] = {}
-        return json
+        if solution: data['solution'] = {}
+        return data
 
     def check(self,responses,student_id=None):
         scores = []
@@ -109,13 +109,13 @@ class ShortAnswer(Question):
         self.num_answers = 1
     
     def to_JSON(self,solution=False):
-        json = {
+        data = {
             "type": "ShortAnswer",
             "text": self.text,
             "max_pts": self.max_pts[0],
             }
-        if solution: json['solution'] = {"text": self.solution}
-        return json
+        if solution: data['solution'] = {"text": self.solution}
+        return data
 
     def check(self,responses,student_id=None):
         return {"scores": [""], "comments": [""]}
@@ -124,13 +124,13 @@ class ShortAnswer(Question):
 class LaTeXAnswer(ShortAnswer):
 
     def to_JSON(self,solution=False):
-        json = {
+        data = {
             "type": "LaTeXAnswer",
             "text": self.text,
             "max_pts": self.max_pts[0],
             }
-        if solution: json['solution'] = {"text": self.solution}
-        return json
+        if solution: data['solution'] = {"text": self.solution}
+        return data
 
 
 class TrueFalse(Question):
@@ -148,16 +148,16 @@ class TrueFalse(Question):
         self.num_answers = 1
 
     def to_JSON(self,solution=False):
-        json = {
+        data = {
             "type": "TrueFalse",
             "text": self.text,
             "max_pts": self.max_pts[0],
             }
-        if solution: json['solution'] = {
+        if solution: data['solution'] = {
             "answer": self.answer, 
             "text": self.solution,
             }
-        return json
+        return data
 
 
     def check(self,responses,student_id=None):
@@ -214,18 +214,18 @@ class MultipleChoice(Question):
         self.num_answers = 1
 
     def to_JSON(self,solution=False):
-        json = {
+        data = {
             "type": "MultipleChoice",
             "text": self.text,
             "choices": self.choices,
             "max_pts": self.max_pts[0],
             "compact": self.compact
             }
-        if solution: json['solution'] = {
+        if solution: data['solution'] = {
             "answer": self.answer, 
             "text": self.solution,
             }
-        return json
+        return data
 
     def check(self,responses,student_id=None):
         try:
@@ -268,6 +268,42 @@ class MultipleChoiceWithExplanation(MultiPartQuestion):
         self.parts = [MultipleChoicePart, ExplanationPart]
 
         super(MultipleChoiceWithExplanation,self).__init__(seed)
+
+
+class MultipleResponse(Question):
+    """
+    Basic multiple choice question with multiple correct answers
+    """
+    # subclasses should override these class attributes
+    text = ""
+    choices = []
+    answer = None # should be string of ordered indices of choices array, separated by commas
+    max_pts = [1]
+    solution = ""
+    compact = False
+
+    def __init__(self,seed):
+#        self.set_seed(seed)
+        self.num_answers = 1
+
+    def to_JSON(self,solution=False):
+        data = {
+            "type": "MultipleResponse",
+            "text": self.text,
+            "choices": self.choices,
+            "max_pts": self.max_pts[0],
+            "compact": self.compact
+            }
+        if solution: data['solution'] = {
+            "answer": self.answer, 
+            "text": self.solution,
+            }
+        return data
+
+    def check(self,responses,student_id=None):
+        score = self.max_pts[0] * (responses[0]==self.answer)
+        return {"scores": [score], "comments": [""]}
+
 
 
 class FillInTheBlank(Question):
@@ -315,16 +351,16 @@ class FillInTheBlank(Question):
             j += 1
 
     def to_JSON(self,solution=False):
-        json = {
+        data = {
             "type": "FillInTheBlank",
             "body": self.body,
             "max_pts": self.max_pts
             }
-        if solution: json['solution'] = {
+        if solution: data['solution'] = {
             "answer": self.answer, 
             "text": self.solution,
             }
-        return json
+        return data
 
     def check(self,responses,student_id=None):
         # calculate the score for each blank
@@ -381,15 +417,15 @@ class FileUpload(Question):
         self.num_answers = 1
 
     def to_JSON(self,solution=False):
-        json = {
+        data = {
             "type": "FileUpload",
             "text": self.text,
             "max_pts": self.max_pts[0],
             }
-        if solution: json['solution'] = {
+        if solution: data['solution'] = {
             "text": self.solution,
             }
-        return json
+        return data
 
     def check(self,responses,student_id=None):
         if responses[0]:
