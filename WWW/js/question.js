@@ -121,6 +121,9 @@ var OHMS = (function(OHMS) {
 	    if (data.type === "MultipleChoice") {
 		var answer = new OHMS.MultipleChoiceAnswer(this,data);
 		context.append(answer.element);
+	    } else if (data.type === "MultipleResponse") {
+		var answer = new OHMS.MultipleResponseAnswer(this,data);
+		context.append(answer.element);
 	    } else if (data.type === "TrueFalse") {
 		var answer = new OHMS.TrueFalseAnswer(this,data);
 		context.append(answer.element);
