@@ -77,8 +77,8 @@ already be set to your user home directory.
 
 NOTE: The CGI "user" may not have permissions to execute 
 scripts in $HOME. Make sure you give it the appropriate 
-permissions by executing "fs sa ... rlidwka". Contact 
-HelpSU if you have any questions about this.
+permissions by executing "fs sa . class-CLASSID-TERM.cgi rlidwka" 
+from $HOME. Contact HelpSU if you have any questions about this.
 
 Follow these steps to install OHMS:
 
@@ -94,7 +94,7 @@ Follow these steps to install OHMS:
    generating databases, computing student's scores, etc.
 
 3. Copy the contents of the cgi-bin/ directory to 
-   $HOME/cgi-bin/.
+   $HOME/cgi-bin/. CHMOD ohms/route.cgi to 755.
 
 4. Copy the contents of the WWW/ directory to 
    $HOME/WWW/ohms (recommended).
