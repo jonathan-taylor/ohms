@@ -94,7 +94,7 @@ Follow these steps to install OHMS:
    generating databases, computing student's scores, etc.
 
 3. Copy the contents of the cgi-bin/ directory to 
-   $HOME/cgi-bin/. CHMOD ohms/route.cgi to 755.
+   $HOME/cgi-bin/.
 
 4. Copy the contents of the WWW/ directory to 
    $HOME/WWW/ohms (recommended).
