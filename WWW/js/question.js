@@ -150,10 +150,10 @@ var OHMS = (function(OHMS) {
 
     Question.prototype.set_comments = function (comments) {
 	this.comments = comments;
-	var comments_list = $("<ul/>");
+	var comments_list = $("<div/>");
 	for(var i=0; i<comments.length; i++) {
 	    if(comments[i])
-		comments_list.append("<li>" + comments[i].replace(/\n/g,'<br />') + "</li>");
+		comments_list.append("<p>" + comments[i] + "</p>");
 	}
 	this.element.find(".comments").empty().append(comments_list);
     }
@@ -215,8 +215,9 @@ var OHMS = (function(OHMS) {
 	if (jqXHR.status == 403) {
 	    alert("Error: It appears that the homework is not tied to a \
 database. The admin should set up a database or update the database IDs.");
-	} else {
-	    alert("There was an error loading your previous response to a question.");
+	} else if (jqXHR.readyState) {
+	    alert("There was an error loading your previous response to a \
+question.");
 	}
     }
 

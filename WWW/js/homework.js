@@ -65,7 +65,7 @@ var OHMS = (function(OHMS) {
     function(jqXHR,textStatus,errorThrow) {
 	if(jqXHR.status==404) {
 	    alert("Error: The homework you requested was not found.");
-	} else {
+	} else if (jqXHR.readyState) {
 	    alert("There was an error loading the homework \
 you requested. Try refreshing the page.");
 	}
