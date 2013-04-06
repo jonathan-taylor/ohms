@@ -218,15 +218,16 @@ def get_grades(student_id):
     """
     sp_id,wk_id = fetch_hw_ids(GRADEBOOK_NAME,0)
     grades = fetch_responses(student_id,sp_id,wk_id)
-    maximum = fetch_responses("MAX",sp_id,wk_id)
+    maximum = fetch_responses("MAXIMUM",sp_id,wk_id)
+    display_name = fetch_responses("DISPLAY",sp_id,wk_id)
     if not grades:
         return {}
     homeworks = []
     for hw, max_pts in maximum[0].content.iteritems():
-        if max_pts and hw != "id":
+        if display_name[0].content[hw] and hw != "id":
             score = grades[0].content[hw]
             homeworks.append({
-                    "homework": hw,
+                    "homework": display_name[0].content[hw],
                     "score": score,
                     "max": max_pts
                     })

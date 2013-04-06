@@ -63,7 +63,7 @@ def update_grades():
         student_id = record.content['id']
         score = 0
         # calculate point value of entire assignment
-        if student_id=='MAX':
+        if student_id=='MAXIMUM':
             for i,question in enumerate(homework.questions):
                 score += sum(question(0).max_pts)
         # otherwise calculate student's score

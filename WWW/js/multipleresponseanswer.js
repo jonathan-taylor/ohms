@@ -36,10 +36,7 @@ var OHMS = (function(OHMS) {
     }
 
     MultipleResponseAnswer.prototype.show_solution = function () {
-        var answers = this.solution.answer.split(",");
-        for (var i=0; i<this.answers.length; i++) {
-	    this.element.find("input[value="+answers[i]+"]").attr("checked","checked");
-        }
+	this.set_value(this.solution.answer);
     }
 
     MultipleResponseAnswer.prototype.get_element_by_value = function (value) {

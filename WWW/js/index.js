@@ -38,6 +38,9 @@ $(document).ready(function() {
 	error: function(jqXHR,textStatus,errorThrown) {
 	    if(jqXHR.status==401) {
 		alert("Error: You may have been logged out. Please refresh the page and try again.");
+	    } else if (jqXHR.readyState) {
+		console.log(jqXHR);
+		alert("There was an error loading the list of homeworks.");
 	    }
 	},
     });
