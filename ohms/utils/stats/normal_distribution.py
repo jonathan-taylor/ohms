@@ -82,7 +82,7 @@ class ZTestQuestion(FillInTheBlank):
     is_string = False
     exact_match = False
 
-    def __init__(self,seed):
+    def _z_changed(self):
         # if z < 1, acceptable z are +/- 0.05 of correct answer
         # otherwise, must be within 5% of correct answer
         z0 = self.z-self.tol if abs(self.z)<1. else (1-self.tol)*self.z
